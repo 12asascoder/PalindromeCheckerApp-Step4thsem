@@ -1,6 +1,5 @@
 import java.util.Scanner;
-import java.util.Stack;
-import java.util.Queue;
+import java.util.Deque;
 import java.util.LinkedList;
 
 public class PalindromeCheckerApp {
@@ -22,22 +21,19 @@ public class PalindromeCheckerApp {
         System.out.print("Enter a word to check if it is a palindrome: ");
         String input = scanner.nextLine();
 
-        // UC6 - Queue + Stack Based Palindrome Check
-        Stack<Character> stack = new Stack<>();
-        Queue<Character> queue = new LinkedList<>();
+        // UC7 - Deque Based Palindrome Check
+        Deque<Character> deque = new LinkedList<>();
 
-        // Push to stack and enqueue to queue
+        // Insert characters into deque
         for (int i = 0; i < input.length(); i++) {
-            char ch = input.charAt(i);
-            stack.push(ch);      // LIFO
-            queue.add(ch);       // FIFO
+            deque.addLast(input.charAt(i));
         }
 
         boolean isPalindrome = true;
 
-        // Compare pop (stack) vs dequeue (queue)
-        while (!stack.isEmpty()) {
-            if (stack.pop() != queue.remove()) {
+        // Compare front and rear
+        while (deque.size() > 1) {
+            if (deque.removeFirst() != deque.removeLast()) {
                 isPalindrome = false;
                 break;
             }
