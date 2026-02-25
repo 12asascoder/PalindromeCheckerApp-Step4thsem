@@ -8,6 +8,7 @@ import java.util.ArrayDeque;
 // =======================
 interface PalindromeStrategy {
     boolean check(String input);
+    String getName(); // To identify strategy
 }
 
 // =======================
@@ -17,7 +18,6 @@ class StackStrategy implements PalindromeStrategy {
 
     @Override
     public boolean check(String input) {
-
         String normalized = input.replaceAll("\\s+", "").toLowerCase();
         Stack<Character> stack = new Stack<>();
 
@@ -30,8 +30,12 @@ class StackStrategy implements PalindromeStrategy {
                 return false;
             }
         }
-
         return true;
+    }
+
+    @Override
+    public String getName() {
+        return "Stack Strategy";
     }
 }
 
@@ -42,7 +46,6 @@ class DequeStrategy implements PalindromeStrategy {
 
     @Override
     public boolean check(String input) {
-
         String normalized = input.replaceAll("\\s+", "").toLowerCase();
         Deque<Character> deque = new ArrayDeque<>();
 
@@ -55,30 +58,38 @@ class DequeStrategy implements PalindromeStrategy {
                 return false;
             }
         }
-
         return true;
     }
-}
 
-// =======================
-// 4️⃣ Context Class
-// =======================
-class PalindromeService {
-
-    private PalindromeStrategy strategy;
-
-    // Inject strategy dynamically
-    public PalindromeService(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean execute(String input) {
-        return strategy.check(input);
+    @Override
+    public String getName() {
+        return "Deque Strategy";
     }
 }
 
 // =======================
-// 5️⃣ Application
+// 4️⃣ Performance Runner
+// =======================
+class PerformanceAnalyzer {
+
+    public static void analyze(PalindromeStrategy strategy, String input) {
+
+        long startTime = System.nanoTime();
+
+        boolean result = strategy.check(input);
+
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+
+        System.out.println("-----------------------------------");
+        System.out.println("Algorithm: " + strategy.getName());
+        System.out.println("Result   : " + (result ? "Palindrome" : "Not Palindrome"));
+        System.out.println("Time Taken (ns): " + duration);
+    }
+}
+
+// =======================
+// 5️⃣ Application (UC13)
 // =======================
 public class PalindromeCheckerApp {
 
@@ -86,37 +97,17 @@ public class PalindromeCheckerApp {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("=== UC12: Strategy Pattern Palindrome Checker ===");
-        System.out.println("Choose Algorithm:");
-        System.out.println("1. Stack Strategy");
-        System.out.println("2. Deque Strategy");
-        System.out.print("Enter choice: ");
-
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // consume newline
-
+        System.out.println("=== UC13: Performance Comparison ===");
         System.out.print("Enter a string: ");
         String input = scanner.nextLine();
 
-        // Strategy selection at runtime
-        PalindromeStrategy strategy;
+        // Create strategies
+        PalindromeStrategy stackStrategy = new StackStrategy();
+        PalindromeStrategy dequeStrategy = new DequeStrategy();
 
-        if (choice == 1) {
-            strategy = new StackStrategy();
-        } else {
-            strategy = new DequeStrategy();
-        }
-
-        // Inject strategy
-        PalindromeService service = new PalindromeService(strategy);
-
-        boolean result = service.execute(input);
-
-        if (result) {
-            System.out.println("Result: The given string is a Palindrome.");
-        } else {
-            System.out.println("Result: The given string is NOT a Palindrome.");
-        }
+        // Run and compare
+        PerformanceAnalyzer.analyze(stackStrategy, input);
+        PerformanceAnalyzer.analyze(dequeStrategy, input);
 
         scanner.close();
     }
